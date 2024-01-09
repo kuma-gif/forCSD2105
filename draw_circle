@@ -1,0 +1,58 @@
+import tkinter as tk
+from tkinter import ttk
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+def draw_circle(radius):
+    x = 0
+    y = radius
+    d = 3 - 2 * radius
+
+    points = [(x, y)]
+
+    while x <= y:
+        x += 1
+        if d > 0:
+            y -= 1
+            d = d + 4 * (x - y) + 10
+        else:
+            d = d + 4 * x + 6
+
+        points.extend([(x, y), (x, -y), (-x, y), (-x, -y),
+                       (y, x), (-y, x), (y, -x), (-y, -x)])
+
+    return points
+
+def plot_circle(points):
+    fig, ax = plt.subplots()
+    x_values = [point[0] for point in points]
+    y_values = [point[1] for point in points]
+
+    ax.scatter(x_values, y_values, marker='.')
+    ax.axis('equal')
+
+    return fig
+
+def on_submit():
+    radius = int(radius_entry.get())
+    circle_points = draw_circle(radius)
+    fig = plot_circle(circle_points)
+
+    canvas = FigureCanvasTkAgg(fig, master=window)
+    canvas.draw()
+    canvas.get_tk_widget().pack()
+
+# GUI setup
+window = tk.Tk()
+window.title("Bresenham's Circle Algorithm")
+
+radius_label = ttk.Label(window, text="Enter the radius of the circle:")
+radius_label.pack()
+
+radius_entry = ttk.Entry(window)
+radius_entry.pack()
+
+submit_button = ttk.Button(window, text="Submit", command=on_submit)
+submit_button.pack()
+
+window.mainloop()
